@@ -20,6 +20,7 @@ const SERVER_UNAVAILABLE_ERROR_MARKERS = [
 
 let cachedValidModelKeys: Set<string> | null = null;
 let cachedAllModels: FavoriteModel[] | null = null;
+let cachedConnectedProviders: Set<string> | null = null;
 let modelCatalogCacheExpiresAt = 0;
 let modelCatalogFetchInFlight: Promise<Set<string> | null> | null = null;
 
@@ -172,16 +173,20 @@ async function getValidModelKeys(options?: { force?: boolean }): Promise<Set<str
 
       const validModelKeys = new Set<string>();
       const allModels: FavoriteModel[] = [];
+      const connected = new Set(response.data.connected ?? []);
 
       for (const provider of response.data.all) {
         for (const modelID of Object.keys(provider.models)) {
           validModelKeys.add(getModelKey(provider.id, modelID));
-          allModels.push({ providerID: provider.id, modelID });
+          if (connected.has(provider.id)) {
+            allModels.push({ providerID: provider.id, modelID });
+          }
         }
       }
 
       cachedValidModelKeys = validModelKeys;
       cachedAllModels = allModels;
+      cachedConnectedProviders = connected;
       modelCatalogCacheExpiresAt = Date.now() + MODEL_CATALOG_CACHE_TTL_MS;
 
       logger.debug(
@@ -381,6 +386,7 @@ export async function reconcileStoredModelSelection(options?: {
 export function __resetModelCatalogCacheForTests(): void {
   cachedValidModelKeys = null;
   cachedAllModels = null;
+  cachedConnectedProviders = null;
   modelCatalogCacheExpiresAt = 0;
   modelCatalogFetchInFlight = null;
 }
@@ -415,6 +421,10 @@ export async function searchModels(query: string): Promise<FavoriteModel[]> {
     logger.warn("[ModelManager] Model catalog unavailable, skipping search");
     return [];
   }
+
+  logger.debug(
+    `[ModelManager] Searching ${cachedAllModels.length} models across ${cachedConnectedProviders?.size ?? 0} connected providers`,
+  );
 
   const results = cachedAllModels
     .filter((model) => {
