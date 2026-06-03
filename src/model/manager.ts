@@ -305,18 +305,23 @@ export async function getModelSelectionLists(): Promise<ModelSelectionLists> {
       );
     }
 
+    // Add all models from connected providers + opencode to favorites
+    // so they appear in the menu even without being in the local state file
+    const connectedModels = cachedAllModels ?? [];
+    const allFavorites = dedupeModels([...favorites, ...connectedModels]);
+
     const favoriteKeys = new Set(
-      favorites.map((model) => getModelKey(model.providerID, model.modelID)),
+      allFavorites.map((model) => getModelKey(model.providerID, model.modelID)),
     );
     const recent = dedupeModels(validatedRecent).filter(
       (model) => !favoriteKeys.has(getModelKey(model.providerID, model.modelID)),
     );
 
     logger.debug(
-      `[ModelManager] Loaded model selection lists from ${stateFilePath}: favorites=${favorites.length}, recent=${recent.length}`,
+      `[ModelManager] Loaded model selection lists from ${stateFilePath}: favorites=${allFavorites.length}, recent=${recent.length} (${connectedModels.length} from connected providers)`,
     );
 
-    return { favorites, recent };
+    return { favorites: allFavorites, recent };
   } catch (err) {
     if (envDefaultModel) {
       logger.warn(
