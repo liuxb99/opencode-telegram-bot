@@ -23,9 +23,13 @@ for /f "delims=" %%i in ('npm root -g') do set GLOBAL_NM=%%i
 set TARGET=%GLOBAL_NM%\@grinev\opencode-telegram-bot\dist
 
 if not exist "%TARGET%" (
-    echo Error: cannot find %TARGET%
-    pause
-    exit /b 1
+    echo Package not found globally. Installing from local build ...
+    call npm install -g .
+    if %errorlevel% neq 0 (
+        echo Global install failed. Make sure you have npm permissions.
+        pause
+        exit /b 1
+    )
 )
 
 echo === Copying dist to %TARGET% ...
