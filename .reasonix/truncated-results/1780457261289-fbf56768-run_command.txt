@@ -1,0 +1,1162 @@
+$ node E:\AIWork\opencode-telegram-bot\test-provider-list.mjs
+[exit 0]
+{
+  "all": [
+    {
+      "id": "upstage",
+      "source": "custom",
+      "name": "Upstage",
+      "env": [
+        "UPSTAGE_API_KEY"
+      ],
+      "options": {},
+      "models": {
+        "solar-mini": {
+          "id": "solar-mini",
+          "providerID": "upstage",
+          "name": "solar-mini",
+          "family": "solar-mini",
+          "api": {
+            "id": "solar-mini",
+            "url": "https://api.upstage.ai/v1/solar",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.15,
+            "output": 0.15,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 32768,
+            "output": 4096
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": false,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2024-06-12",
+          "variants": {}
+        },
+        "solar-pro3": {
+          "id": "solar-pro3",
+          "providerID": "upstage",
+          "name": "solar-pro3",
+          "family": "solar-pro",
+          "api": {
+            "id": "solar-pro3",
+            "url": "https://api.upstage.ai/v1/solar",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.25,
+            "output": 0.25,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 131072,
+            "output": 8192
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": true,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2026-01",
+          "variants": {
+            "low": {
+              "reasoningEffort": "low"
+            },
+            "medium": {
+              "reasoningEffort": "medium"
+            },
+            "high": {
+              "reasoningEffort": "high"
+            }
+          }
+        },
+        "solar-pro2": {
+          "id": "solar-pro2",
+          "providerID": "upstage",
+          "name": "solar-pro2",
+          "family": "solar-pro",
+          "api": {
+            "id": "solar-pro2",
+            "url": "https://api.upstage.ai/v1/solar",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.25,
+            "output": 0.25,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 65536,
+            "output": 8192
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": true,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-05-20",
+          "variants": {
+            "low": {
+              "reasoningEffort": "low"
+            },
+            "medium": {
+              "reasoningEffort": "medium"
+            },
+            "high": {
+              "reasoningEffort": "high"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "clarifai",
+      "source": "custom",
+      "name": "Clarifai",
+      "env": [
+        "CLARIFAI_PAT"
+      ],
+      "options": {},
+      "models": {
+        "clarifai/main/models/mm-poly-8b": {
+          "id": "clarifai/main/models/mm-poly-8b",
+          "providerID": "clarifai",
+          "name": "MM Poly 8B",
+          "family": "mm-poly",
+          "api": {
+            "id": "clarifai/main/models/mm-poly-8b",
+            "url": "https://api.clarifai.com/v2/ext/openai/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.658,
+            "output": 1.11,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 32768,
+            "output": 4096
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": false,
+            "attachment": true,
+            "toolcall": false,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": true,
+              "video": true,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-06",
+          "variants": {}
+        },
+        "mistralai/completion/models/Ministral-3-3B-Reasoning-2512": {
+          "id": "mistralai/completion/models/Ministral-3-3B-Reasoning-2512",
+          "providerID": "clarifai",
+          "name": "Ministral 3 3B Reasoning 2512",
+          "family": "ministral",
+          "api": {
+            "id": "mistralai/completion/models/Ministral-3-3B-Reasoning-2512",
+            "url": "https://api.clarifai.com/v2/ext/openai/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 1.039,
+            "output": 0.54825,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 262144,
+            "output": 262144
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": true,
+            "attachment": true,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": true,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-12",
+          "variants": {}
+        },
+        "mistralai/completion/models/Ministral-3-14B-Reasoning-2512": {
+          "id": "mistralai/completion/models/Ministral-3-14B-Reasoning-2512",
+          "providerID": "clarifai",
+          "name": "Ministral 3 14B Reasoning 2512",
+          "family": "ministral",
+          "api": {
+            "id": "mistralai/completion/models/Ministral-3-14B-Reasoning-2512",
+            "url": "https://api.clarifai.com/v2/ext/openai/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 2.5,
+            "output": 1.7,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 262144,
+            "output": 262144
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": true,
+            "attachment": true,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": true,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-12-01",
+          "variants": {}
+        },
+        "arcee_ai/AFM/models/trinity-mini": {
+          "id": "arcee_ai/AFM/models/trinity-mini",
+          "providerID": "clarifai",
+          "name": "Trinity Mini",
+          "family": "trinity-mini",
+          "api": {
+            "id": "arcee_ai/AFM/models/trinity-mini",
+            "url": "https://api.clarifai.com/v2/ext/openai/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.045,
+            "output": 0.15,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 131072,
+            "output": 131072
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": true,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-12",
+          "variants": {
+            "low": {
+              "reasoningEffort": "low"
+            },
+            "medium": {
+              "reasoningEffort": "medium"
+            },
+            "high": {
+              "reasoningEffort": "high"
+            }
+          }
+        },
+        "qwen/qwenLM/models/Qwen3-30B-A3B-Instruct-2507": {
+          "id": "qwen/qwenLM/models/Qwen3-30B-A3B-Instruct-2507",
+          "providerID": "clarifai",
+          "name": "Qwen3 30B A3B Instruct 2507",
+          "family": "qwen",
+          "api": {
+            "id": "qwen/qwenLM/models/Qwen3-30B-A3B-Instruct-2507",
+            "url": "https://api.clarifai.com/v2/ext/openai/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.3,
+            "output": 0.5,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 262144,
+            "output": 262144
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": false,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-07-30",
+          "variants": {}
+        },
+        "qwen/qwenLM/models/Qwen3-30B-A3B-Thinking-2507": {
+          "id": "qwen/qwenLM/models/Qwen3-30B-A3B-Thinking-2507",
+          "providerID": "clarifai",
+          "name": "Qwen3 30B A3B Thinking 2507",
+          "family": "qwen",
+          "api": {
+            "id": "qwen/qwenLM/models/Qwen3-30B-A3B-Thinking-2507",
+            "url": "https://api.clarifai.com/v2/ext/openai/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.36,
+            "output": 1.3,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 262144,
+            "output": 131072
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": true,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-07-31",
+          "variants": {
+            "low": {
+              "reasoningEffort": "low"
+            },
+            "medium": {
+              "reasoningEffort": "medium"
+            },
+            "high": {
+              "reasoningEffort": "high"
+            }
+          }
+        },
+        "qwen/qwenCoder/models/Qwen3-Coder-30B-A3B-Instruct": {
+          "id": "qwen/qwenCoder/models/Qwen3-Coder-30B-A3B-Instruct",
+          "providerID": "clarifai",
+          "name": "Qwen3 Coder 30B A3B Instruct",
+          "family": "qwen",
+          "api": {
+            "id": "qwen/qwenCoder/models/Qwen3-Coder-30B-A3B-Instruct",
+            "url": "https://api.clarifai.com/v2/ext/openai/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.11458,
+            "output": 0.74812,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 262144,
+            "output": 65536
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": false,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-07-31",
+          "variants": {}
+        },
+        "deepseek-ai/deepseek-ocr/models/DeepSeek-OCR": {
+          "id": "deepseek-ai/deepseek-ocr/models/DeepSeek-OCR",
+          "providerID": "clarifai",
+          "name": "DeepSeek OCR",
+          "family": "deepseek",
+          "api": {
+            "id": "deepseek-ai/deepseek-ocr/models/DeepSeek-OCR",
+            "url": "https://api.clarifai.com/v2/ext/openai/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.2,
+            "output": 0.7,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 8192,
+            "output": 8192
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": false,
+            "attachment": true,
+            "toolcall": false,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": true,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-10-20",
+          "variants": {}
+        },
+        "minimaxai/chat-completion/models/MiniMax-M2_5-high-throughput": {
+          "id": "minimaxai/chat-completion/models/MiniMax-M2_5-high-throughput",
+          "providerID": "clarifai",
+          "name": "MiniMax-M2.5 High Throughput",
+          "family": "minimax",
+          "api": {
+            "id": "minimaxai/chat-completion/models/MiniMax-M2_5-high-throughput",
+            "url": "https://api.clarifai.com/v2/ext/openai/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.3,
+            "output": 1.2,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 204800,
+            "output": 131072
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": true,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2026-02-12",
+          "variants": {}
+        },
+        "openai/chat-completion/models/gpt-oss-20b": {
+          "id": "openai/chat-completion/models/gpt-oss-20b",
+          "providerID": "clarifai",
+          "name": "GPT OSS 20B",
+          "family": "gpt-oss",
+          "api": {
+            "id": "openai/chat-completion/models/gpt-oss-20b",
+            "url": "https://api.clarifai.com/v2/ext/openai/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.045,
+            "output": 0.18,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 131072,
+            "output": 16384
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": true,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-08-05",
+          "variants": {
+            "low": {
+              "reasoningEffort": "low"
+            },
+            "medium": {
+              "reasoningEffort": "medium"
+            },
+            "high": {
+              "reasoningEffort": "high"
+            }
+          }
+        },
+        "openai/chat-completion/models/gpt-oss-120b-high-throughput": {
+          "id": "openai/chat-completion/models/gpt-oss-120b-high-throughput",
+          "providerID": "clarifai",
+          "name": "GPT OSS 120B High Throughput",
+          "family": "gpt-oss",
+          "api": {
+            "id": "openai/chat-completion/models/gpt-oss-120b-high-throughput",
+            "url": "https://api.clarifai.com/v2/ext/openai/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.09,
+            "output": 0.36,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 131072,
+            "output": 16384
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": true,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-08-05",
+          "variants": {
+            "low": {
+              "reasoningEffort": "low"
+            },
+            "medium": {
+              "reasoningEffort": "medium"
+            },
+            "high": {
+              "reasoningEffort": "high"
+            }
+          }
+        },
+        "moonshotai/chat-completion/models/Kimi-K2_6": {
+          "id": "moonshotai/chat-completion/models/Kimi-K2_6",
+          "providerID": "clarifai",
+          "name": "Kimi K2.6",
+          "family": "kimi-k2.6",
+          "api": {
+            "id": "moonshotai/chat-completion/models/Kimi-K2_6",
+            "url": "https://api.clarifai.com/v2/ext/openai/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0.95,
+            "output": 4,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 262144,
+            "output": 262144
+          },
+          "capabilities": {
+            "temperature": true,
+            "reasoning": true,
+            "attachment": true,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": true,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": {
+              "field": "reasoning_content"
+            }
+          },
+          "release_date": "2026-04-21",
+          "variants": {}
+        }
+      }
+    },
+    {
+      "id": "ollama-cloud",
+      "source": "custom",
+      "name": "Ollama Cloud",
+      "env": [
+        "OLLAMA_API_KEY"
+      ],
+      "options": {},
+      "models": {
+        "qwen3-vl:235b-instruct": {
+          "id": "qwen3-vl:235b-instruct",
+          "providerID": "ollama-cloud",
+          "name": "qwen3-vl:235b-instruct",
+          "family": "qwen",
+          "api": {
+            "id": "qwen3-vl:235b-instruct",
+            "url": "https://ollama.com/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 262144,
+            "output": 131072
+          },
+          "capabilities": {
+            "reasoning": false,
+            "attachment": true,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": true,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-09-22",
+          "variants": {}
+        },
+        "gemma3:27b": {
+          "id": "gemma3:27b",
+          "providerID": "ollama-cloud",
+          "name": "gemma3:27b",
+          "family": "gemma",
+          "api": {
+            "id": "gemma3:27b",
+            "url": "https://ollama.com/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 131072,
+            "output": 131072
+          },
+          "capabilities": {
+            "reasoning": false,
+            "attachment": true,
+            "toolcall": false,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": true,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-07-27",
+          "variants": {}
+        },
+        "kimi-k2:1t": {
+          "id": "kimi-k2:1t",
+          "providerID": "ollama-cloud",
+          "name": "kimi-k2:1t",
+          "family": "kimi",
+          "api": {
+            "id": "kimi-k2:1t",
+            "url": "https://ollama.com/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 262144,
+            "output": 262144
+          },
+          "capabilities": {
+            "reasoning": false,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-07-11",
+          "variants": {}
+        },
+        "gemma4:31b": {
+          "id": "gemma4:31b",
+          "providerID": "ollama-cloud",
+          "name": "gemma4:31b",
+          "family": "gemma",
+          "api": {
+            "id": "gemma4:31b",
+            "url": "https://ollama.com/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 262144,
+            "output": 262144
+          },
+          "capabilities": {
+            "reasoning": true,
+            "attachment": true,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": true,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2026-04-02",
+          "variants": {
+            "low": {
+              "reasoningEffort": "low"
+            },
+            "medium": {
+              "reasoningEffort": "medium"
+            },
+            "high": {
+              "reasoningEffort": "high"
+            }
+          }
+        },
+        "glm-4.6": {
+          "id": "glm-4.6",
+          "providerID": "ollama-cloud",
+          "name": "glm-4.6",
+          "family": "glm",
+          "api": {
+            "id": "glm-4.6",
+            "url": "https://ollama.com/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 202752,
+            "output": 131072
+          },
+          "capabilities": {
+            "reasoning": true,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2025-09-29",
+          "variants": {}
+        },
+        "nemotron-3-super": {
+          "id": "nemotron-3-super",
+          "providerID": "ollama-cloud",
+          "name": "nemotron-3-super",
+          "family": "nemotron",
+          "api": {
+            "id": "nemotron-3-super",
+            "url": "https://ollama.com/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          },
+          "limit": {
+            "context": 262144,
+            "output": 65536
+          },
+          "capabilities": {
+            "reasoning": true,
+            "attachment": false,
+            "toolcall": true,
+            "input": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "output": {
+              "text": true,
+              "audio": false,
+              "image": false,
+              "video": false,
+              "pdf": false
+            },
+            "interleaved": false
+          },
+          "release_date": "2026-03-11",
+          "variants": {
+            "low": {
+              "reasoningEffort": "low"
+            },
+            "medium": {
+              "reasoningEffort": "medium"
+            },
+            "high": {
+              "reasoningEffort": "high"
+            }
+          }
+        },
+        "kimi-k2-thinking": {
+          "id": "kimi-k2-thinking",
+          "providerID": "ollama-cloud",
+          "name": "kimi-k2-thinking",
+          "family": "kimi-thinking",
+          "api": {
+            "id": "kimi-k2-thinking",
+            "url": "https://ollama.com/v1",
+            "npm": "@ai-sdk/openai-compatible"
+          },
+          "status": "active",
+          "headers": {},
+          "options": {},
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            
+
+[… truncated 224000 chars …]
