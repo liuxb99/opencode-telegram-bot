@@ -157,7 +157,7 @@ async function getValidModelKeys(options?: { force?: boolean }): Promise<Set<str
   modelCatalogFetchInFlight = (async () => {
     try {
       logger.debug("[ModelManager] Refreshing model catalog from OpenCode API");
-      const response = await opencodeClient.config.providers();
+      const response = await opencodeClient.provider.list();
 
       if (response.error || !response.data) {
         logModelCatalogRefreshFailure(response.error, "error");
@@ -173,7 +173,7 @@ async function getValidModelKeys(options?: { force?: boolean }): Promise<Set<str
       const validModelKeys = new Set<string>();
       const allModels: FavoriteModel[] = [];
 
-      for (const provider of response.data.providers) {
+      for (const provider of response.data.all) {
         for (const modelID of Object.keys(provider.models)) {
           validModelKeys.add(getModelKey(provider.id, modelID));
           allModels.push({ providerID: provider.id, modelID });
@@ -185,7 +185,7 @@ async function getValidModelKeys(options?: { force?: boolean }): Promise<Set<str
       modelCatalogCacheExpiresAt = Date.now() + MODEL_CATALOG_CACHE_TTL_MS;
 
       logger.debug(
-        `[ModelManager] Model catalog refreshed: providers=${response.data.providers.length}, models=${validModelKeys.size}`,
+        `[ModelManager] Model catalog refreshed: providers=${response.data.all.length}, models=${validModelKeys.size}`,
       );
 
       return cachedValidModelKeys;

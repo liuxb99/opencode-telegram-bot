@@ -5,14 +5,14 @@ import { t } from "../../i18n/index.js";
 
 export async function modelsCommand(ctx: CommandContext<Context>) {
   try {
-    const { data: providersData, error } = await opencodeClient.config.providers();
+    const { data: providersData, error } = await opencodeClient.provider.list();
 
     if (error || !providersData) {
       await ctx.reply(t("legacy.models.fetch_error"));
       return;
     }
 
-    const providers = providersData.providers;
+    const providers = providersData.all;
 
     if (!providers || providers.length === 0) {
       await ctx.reply(t("legacy.models.empty"));
