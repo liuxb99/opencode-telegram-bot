@@ -24,6 +24,12 @@ echo === Copying dist to %TARGET% ...
 xcopy /E /Y dist "%TARGET%" >nul
 echo Done.
 
-echo.
-echo Restart the bot now!
+echo === Stopping old bot ...
+wmic process where "name='node.exe' and commandline like '%%opencode-telegram%%'" delete 2>nul
+timeout /t 2 /nobreak >nul
+
+echo === Starting bot ...
+start "opencode-telegram" cmd /c "opencode-telegram start --mode installed"
+
+echo Bot started in new window.
 pause
