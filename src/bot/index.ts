@@ -1171,6 +1171,9 @@ export function createBot(): Bot<Context> {
   bot.command("help", helpCommand);
   bot.command("status", statusCommand);
   bot.command("tts", ttsCommand);
+  bot.command("models", async (ctx) => {
+    await showModelSelectionMenu(ctx);
+  });
   bot.command("opencode_start", opencodeStartCommand);
   bot.command("opencode_stop", opencodeStopCommand);
   bot.command("projects", projectsCommand);

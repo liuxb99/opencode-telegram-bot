@@ -6,6 +6,7 @@ export const en = {
   "cmd.description.sessions": "List sessions",
   "cmd.description.messages": "Browse session messages",
   "cmd.description.tts": "Toggle audio replies",
+  "cmd.description.models": "Switch model",
   "cmd.description.projects": "List projects",
   "cmd.description.worktree": "Switch git worktrees",
   "cmd.description.task": "Create a scheduled task",
