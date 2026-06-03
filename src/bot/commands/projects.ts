@@ -1,5 +1,6 @@
 import { CommandContext, Context } from "grammy";
 import { InlineKeyboard } from "grammy";
+import { mkdir } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { getCurrentProject, setCurrentProject } from "../../settings/manager.js";
@@ -371,6 +372,9 @@ export async function handleProjectPathInput(ctx: Context): Promise<boolean> {
     const resolvedPath = path.resolve(text);
     const folderName = resolvedPath.split(/[\\/]/).filter(Boolean).at(-1) ?? resolvedPath;
     const id = `dir_${createHash("md5").update(resolvedPath).digest("hex").slice(0, 14)}`;
+
+    // Create directory if it doesn't exist
+    await mkdir(resolvedPath, { recursive: true });
 
     // Try to find existing project by path, or create a new one
     let project: ProjectInfo;
