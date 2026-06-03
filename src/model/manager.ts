@@ -178,7 +178,7 @@ async function getValidModelKeys(options?: { force?: boolean }): Promise<Set<str
       for (const provider of response.data.all) {
         for (const modelID of Object.keys(provider.models)) {
           validModelKeys.add(getModelKey(provider.id, modelID));
-          if (connected.has(provider.id)) {
+          if (provider.id === "opencode" || connected.has(provider.id)) {
             allModels.push({ providerID: provider.id, modelID });
           }
         }
