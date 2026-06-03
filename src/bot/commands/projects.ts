@@ -1,9 +1,11 @@
 import { CommandContext, Context } from "grammy";
 import { InlineKeyboard } from "grammy";
-import { getCurrentProject } from "../../settings/manager.js";
+import { createHash } from "node:crypto";
+import path from "node:path";
+import { getCurrentProject, setCurrentProject } from "../../settings/manager.js";
 import { getGitWorktreeContext } from "../../git/worktree.js";
-import { getProjects } from "../../project/manager.js";
-import { syncSessionDirectoryCache } from "../../session/cache-manager.js";
+import { getProjects, getProjectByWorktree } from "../../project/manager.js";
+import { syncSessionDirectoryCache, upsertSessionDirectory } from "../../session/cache-manager.js";
 
 import {
   appendInlineMenuCancelButton,
@@ -12,6 +14,7 @@ import {
 } from "../handlers/inline-menu.js";
 import { switchToProject } from "../utils/switch-project.js";
 import { clearAllInteractionState } from "../../interaction/cleanup.js";
+import { interactionManager } from "../../interaction/manager.js";
 import { isForegroundBusy, replyBusyBlocked } from "../utils/busy-guard.js";
 import { logger } from "../../utils/logger.js";
 import { t } from "../../i18n/index.js";
@@ -20,6 +23,7 @@ import { ProjectInfo } from "../../settings/manager.js";
 
 const MAX_INLINE_BUTTON_LABEL_LENGTH = 64;
 const PROJECT_PAGE_CALLBACK_PREFIX = "projects:page:";
+const PROJECT_INPUT_PATH_CALLBACK = "project:input-path";
 
 interface ProjectSelectDeps {
   ensureEventSubscription?: (directory: string) => Promise<void>;
@@ -177,6 +181,9 @@ async function buildProjectsKeyboard(
     }
   }
 
+  keyboard.row();
+  keyboard.text(t("projects.input_path"), PROJECT_INPUT_PATH_CALLBACK);
+
   return keyboard;
 }
 
@@ -275,6 +282,29 @@ export async function handleProjectSelect(
     return true;
   }
 
+  // Handle manual path input button
+  if (callbackQuery.data === PROJECT_INPUT_PATH_CALLBACK) {
+    const isActiveMenu = await ensureActiveInlineMenu(ctx, "project");
+    if (!isActiveMenu) {
+      return true;
+    }
+
+    await ctx.answerCallbackQuery();
+    await ctx.deleteMessage().catch(() => {});
+
+    interactionManager.start({
+      kind: "custom",
+      expectedInput: "text",
+      metadata: {
+        flow: "project-input-path",
+        stage: "input",
+      },
+    });
+
+    await ctx.reply(t("projects.input_path_prompt"));
+    return true;
+  }
+
   const projectId = callbackQuery.data.replace("project:", "");
 
   const isActiveMenu = await ensureActiveInlineMenu(ctx, "project");
@@ -314,4 +344,49 @@ export async function handleProjectSelect(
   }
 
   return true;
+}
+
+/**
+ * Handle text input for manual project path entry.
+ * Expects an active custom interaction with flow "project-input-path".
+ */
+export async function handleProjectPathInput(ctx: Context): Promise<boolean> {
+  const state = interactionManager.getSnapshot();
+  if (
+    !state ||
+    state.kind !== "custom" ||
+    state.metadata.flow !== "project-input-path"
+  ) {
+    return false;
+  }
+
+  const text = ctx.message?.text?.trim();
+  if (!text) {
+    return false;
+  }
+
+  interactionManager.clear("project_path_input");
+
+  try {
+    const resolvedPath = path.resolve(text);
+    const folderName = resolvedPath.split(/[\\/]/).filter(Boolean).at(-1) ?? resolvedPath;
+    const id = `dir_${createHash("md5").update(resolvedPath).digest("hex").slice(0, 14)}`;
+
+    // Try to find existing project by path, or create a new one
+    let project: ProjectInfo;
+    try {
+      project = await getProjectByWorktree(resolvedPath);
+    } catch {
+      project = { id, worktree: resolvedPath, name: folderName };
+    }
+
+    await upsertSessionDirectory(resolvedPath, Date.now());
+    await switchToProject(ctx, project, "project_path_input");
+    await ctx.reply(t("projects.input_path_done", { path: resolvedPath }));
+    return true;
+  } catch (err) {
+    logger.error("[Projects] Error switching to path:", err);
+    await ctx.reply(t("projects.input_path_error", { path: text }));
+    return true;
+  }
 }

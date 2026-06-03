@@ -145,6 +145,10 @@ export const en = {
   "projects.selected":
     "✅ Project selected: {project}\n\n📋 Session was reset. Use /sessions or /new for this project.",
   "projects.select_error": "🔴 Failed to select project.",
+  "projects.input_path": "📁 Input path",
+  "projects.input_path_prompt": "📁 Type the full directory path to switch to:\n\nExample: `C:\\Users\\me\\projects\\my-app`",
+  "projects.input_path_done": "✅ Switched to: `{path}`",
+  "projects.input_path_error": "🔴 Failed to switch to: `{path}`",
 
   "sessions.project_not_selected":
     "🏗 Project is not selected.\n\nFirst select a project with /projects.",

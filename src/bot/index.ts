@@ -22,7 +22,7 @@ import {
   sessionsCommand,
 } from "./commands/sessions.js";
 import { newCommand } from "./commands/new.js";
-import { projectsCommand, handleProjectSelect } from "./commands/projects.js";
+import { projectsCommand, handleProjectSelect, handleProjectPathInput } from "./commands/projects.js";
 import { worktreeCommand, handleWorktreeCallback } from "./commands/worktree.js";
 import { openCommand, handleOpenCallback, clearOpenPathIndex } from "./commands/open.js";
 import { clearLsPathIndex, handleLsCallback, lsCommand } from "./commands/ls.js";
@@ -1491,6 +1491,11 @@ export function createBot(): Bot<Context> {
 
     const handledModelSearchText = await handleModelSearchTextInput(ctx);
     if (handledModelSearchText) {
+      return;
+    }
+
+    const handledProjectPath = await handleProjectPathInput(ctx);
+    if (handledProjectPath) {
       return;
     }
 

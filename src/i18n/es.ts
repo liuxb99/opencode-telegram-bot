@@ -152,6 +152,10 @@ export const es: I18nDictionary = {
   "projects.selected":
     "✅ Proyecto seleccionado: {project}\n\n📋 La sesión se reinició. Usa /sessions o /new para este proyecto.",
   "projects.select_error": "🔴 No se pudo seleccionar el proyecto.",
+  "projects.input_path": "📁 Ingresar ruta",
+  "projects.input_path_prompt": "📁 Escribe la ruta completa del directorio:\n\nEjemplo: `C:\\Users\\me\\projects\\my-app`",
+  "projects.input_path_done": "✅ Cambiado a: `{path}`",
+  "projects.input_path_error": "🔴 Error al cambiar a: `{path}`",
 
   "sessions.project_not_selected":
     "🏗 No hay un proyecto seleccionado.\n\nPrimero selecciona un proyecto con /projects.",

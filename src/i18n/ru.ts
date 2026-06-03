@@ -144,6 +144,10 @@ export const ru: I18nDictionary = {
   "projects.selected":
     "✅ Проект выбран: {project}\n\n📋 Сессия сброшена. Используйте /sessions или /new для работы с этим проектом.",
   "projects.select_error": "🔴 Ошибка при выборе проекта.",
+  "projects.input_path": "📁 Ввести путь",
+  "projects.input_path_prompt": "📁 Введите полный путь к каталогу:\n\nПример: `C:\\Users\\me\\projects\\my-app`",
+  "projects.input_path_done": "✅ Переключено на: `{path}`",
+  "projects.input_path_error": "🔴 Ошибка переключения на: `{path}`",
 
   "sessions.project_not_selected":
     "🏗 Проект не выбран.\n\nСначала выберите проект командой /projects.",

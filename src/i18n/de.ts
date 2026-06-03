@@ -152,6 +152,10 @@ export const de: I18nDictionary = {
   "projects.selected":
     "✅ Projekt ausgewählt: {project}\n\n📋 Sitzung wurde zurückgesetzt. Nutze /sessions oder /new für dieses Projekt.",
   "projects.select_error": "🔴 Projekt konnte nicht ausgewählt werden.",
+  "projects.input_path": "📁 Pfad eingeben",
+  "projects.input_path_prompt": "📁 Gib den vollständigen Pfad zum Wechseln ein:\n\nBeispiel: `C:\\Users\\me\\projects\\my-app`",
+  "projects.input_path_done": "✅ Gewechselt zu: `{path}`",
+  "projects.input_path_error": "🔴 Wechsel fehlgeschlagen: `{path}`",
 
   "sessions.project_not_selected":
     "🏗 Projekt ist nicht ausgewählt.\n\nWähle zuerst ein Projekt mit /projects.",
