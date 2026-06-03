@@ -305,10 +305,12 @@ export async function getModelSelectionLists(): Promise<ModelSelectionLists> {
       );
     }
 
-    // Add all models from connected providers + opencode to favorites
-    // so they appear in the menu even without being in the local state file
-    const connectedModels = cachedAllModels ?? [];
-    const allFavorites = dedupeModels([...favorites, ...connectedModels]);
+    // Add all models from opencode provider to favorites
+    // so free models show up in the menu without needing to search
+    const opencodeModels = (cachedAllModels ?? []).filter(
+      (m) => m.providerID === "opencode",
+    );
+    const allFavorites = dedupeModels([...favorites, ...opencodeModels]);
 
     const favoriteKeys = new Set(
       allFavorites.map((model) => getModelKey(model.providerID, model.modelID)),
@@ -318,7 +320,7 @@ export async function getModelSelectionLists(): Promise<ModelSelectionLists> {
     );
 
     logger.debug(
-      `[ModelManager] Loaded model selection lists from ${stateFilePath}: favorites=${allFavorites.length}, recent=${recent.length} (${connectedModels.length} from connected providers)`,
+      `[ModelManager] Loaded model selection lists from ${stateFilePath}: favorites=${allFavorites.length}, recent=${recent.length} (${opencodeModels.length} from opencode provider)`,
     );
 
     return { favorites: allFavorites, recent };
