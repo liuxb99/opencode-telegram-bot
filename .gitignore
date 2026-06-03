@@ -33,3 +33,10 @@ settings.json
 
 # Packaging artifacts
 *.tgz
+
+# Temp / generated files
+*.mjs
+agent_Tools_Record.md
+agent_workflow.md
+agent_workflow_History.md
+.reasonix/
