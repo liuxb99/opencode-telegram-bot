@@ -82,7 +82,12 @@ import { pinnedMessageManager } from "../pinned/manager.js";
 import { t } from "../i18n/index.js";
 import { getCurrentProject } from "../settings/manager.js";
 import { createTelegramBotOptions } from "./telegram-client-options.js";
-import { clearPromptResponseMode, processUserPrompt } from "./handlers/prompt.js";
+import {
+  clearPromptResponseMode,
+  processUserPrompt,
+  retryPromptOnInterruptError,
+  clearStoredPrompt,
+} from "./handlers/prompt.js";
 import { handleVoiceMessage } from "./handlers/voice.js";
 import { handleDocumentMessage } from "./handlers/document.js";
 import { createMediaGroupAttachmentMiddleware } from "./handlers/media-group.js";
@@ -876,6 +881,7 @@ async function ensureEventSubscription(directory: string): Promise<void> {
 
     const completedRun = assistantRunState.finishRun(sessionId, "session_idle");
     clearPromptResponseMode(sessionId);
+    clearStoredPrompt(sessionId);
 
     if (!botInstance || !chatIdInstance) {
       foregroundSessionState.markIdle(sessionId);
@@ -955,6 +961,15 @@ async function ensureEventSubscription(directory: string): Promise<void> {
     const normalizedMessage = message.trim() || t("common.unknown_error");
     if (shouldSuppressUserAbortSessionError(sessionId, normalizedMessage)) {
       logger.debug(`[Bot] Suppressed user-initiated abort error: session=${sessionId}`);
+      foregroundSessionState.markIdle(sessionId);
+      await scheduledTaskRuntime.flushDeferredDeliveries();
+      return;
+    }
+
+    // InterruptError: OpenCode server fiber race (Effect-TS). Auto-retry up to 3 times.
+    if (normalizedMessage.includes("InterruptError") || normalizedMessage.includes("All fibers interrupted")) {
+      logger.debug(`[Bot] InterruptError (server fiber race) for session=${sessionId}; scheduling retry`);
+      retryPromptOnInterruptError(sessionId);
       foregroundSessionState.markIdle(sessionId);
       await scheduledTaskRuntime.flushDeferredDeliveries();
       return;

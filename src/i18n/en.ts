@@ -74,6 +74,7 @@ export const en = {
     "⚠️ Active session does not match the selected project, so it was reset. Use /sessions to pick one or /new to create a new session.",
   "bot.prompt_send_error": "Failed to send request to OpenCode.",
   "bot.session_error": "🔴 OpenCode returned an error: {message}",
+  "bot.server_temporary_error": "🔴 Server temporarily unavailable. Auto-retrying...",
   "bot.session_retry":
     "🔁 {message}\n\nProvider keeps returning the same error on repeated retries. Use /abort to abort.",
   "bot.external_user_input": "External user input",

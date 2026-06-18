@@ -33,6 +33,128 @@ let botInstance: Bot<Context> | null = null;
 let chatIdInstance: number | null = null;
 const promptResponseModes = new Map<string, PromptResponseMode>();
 
+// ---------------------------------------------------------------------------
+// Prompt retry on transient server errors (InterruptError / fiber race)
+// ---------------------------------------------------------------------------
+const MAX_PROMPT_RETRIES = 3;
+
+interface StoredPrompt {
+  options: {
+    sessionID: string;
+    directory: string;
+    parts: Array<TextPartInput | FilePartInput>;
+    agent?: string;
+    model?: { providerID: string; modelID: string };
+    variant?: string;
+  };
+  responseMode: PromptResponseMode;
+  chatId: number;
+  configuredProviderID: string;
+  configuredModelID: string;
+  retryCount: number;
+}
+
+const promptRetryStore = new Map<string, StoredPrompt>();
+
+/** Store prompt options so the session error handler can retry on transient errors. */
+export function storePromptForRetry(sessionId: string, stored: StoredPrompt): void {
+  promptRetryStore.set(sessionId, stored);
+}
+
+/** Remove stored prompt for a session (called on success or when no longer needed). */
+export function clearStoredPrompt(sessionId: string): void {
+  promptRetryStore.delete(sessionId);
+}
+
+/**
+ * Retry the last prompt for a session on InterruptError (Effect-TS fiber race).
+ * Retries up to MAX_PROMPT_RETRIES times. On final failure, sends an error
+ * message to the user.
+ */
+export function retryPromptOnInterruptError(sessionId: string): void {
+  const stored = promptRetryStore.get(sessionId);
+  if (!stored) {
+    logger.debug("[Bot] No stored prompt for retry: session=%s", sessionId);
+    return;
+  }
+
+  if (stored.retryCount >= MAX_PROMPT_RETRIES) {
+    logger.warn(
+      "[Bot] Max retries (%d) reached for session=%s; giving up",
+      MAX_PROMPT_RETRIES,
+      sessionId,
+    );
+    const bot = getPromptBotInstance();
+    if (bot) {
+      void bot.api
+        .sendMessage(stored.chatId, t("bot.server_temporary_error"))
+        .catch(() => {});
+    }
+    promptRetryStore.delete(sessionId);
+    return;
+  }
+
+  // Update retry count
+  promptRetryStore.set(sessionId, { ...stored, retryCount: stored.retryCount + 1 });
+
+  logger.info(
+    "[Bot] Retrying prompt (attempt %d/%d) for session=%s",
+    stored.retryCount + 1,
+    MAX_PROMPT_RETRIES,
+    sessionId,
+  );
+
+  // Re-mark session as busy so state is consistent
+  foregroundSessionState.markBusy(sessionId, stored.options.directory);
+  void markAttachedSessionBusy(sessionId);
+  assistantRunState.startRun(sessionId, {
+    startedAt: Date.now(),
+    configuredAgent: stored.options.agent ?? "build",
+    configuredProviderID: stored.configuredProviderID,
+    configuredModelID: stored.configuredModelID,
+  });
+  setPromptResponseMode(sessionId, stored.responseMode);
+
+  safeBackgroundTask({
+    taskName: "session.promptAsync (retry)",
+    task: () => opencodeClient.session.promptAsync(stored.options),
+    onSuccess: ({ error }) => {
+      if (error) {
+        foregroundSessionState.markIdle(sessionId);
+        void markAttachedSessionIdle(sessionId);
+        assistantRunState.clearRun(sessionId, "session_prompt_retry_api_error");
+        clearPromptResponseMode(sessionId);
+        logger.error("[Bot] Retry prompt API error for session=%s:", sessionId, error);
+        const botApi = getPromptBotInstance()?.api;
+        if (botApi) {
+          void botApi
+            .sendMessage(stored.chatId, t("bot.server_temporary_error"))
+            .catch(() => {});
+        }
+        promptRetryStore.delete(sessionId);
+        return;
+      }
+      logger.info("[Bot] Retry prompt accepted for session=%s", sessionId);
+      // Clean up stored prompt on next session idle/complete event
+      // Don't delete here — let normal flow handle it
+    },
+    onError: (error) => {
+      foregroundSessionState.markIdle(sessionId);
+      void markAttachedSessionIdle(sessionId);
+      assistantRunState.clearRun(sessionId, "session_prompt_retry_background_error");
+      clearPromptResponseMode(sessionId);
+      logger.error("[Bot] Retry prompt background error for session=%s:", sessionId, error);
+      const botApi = getPromptBotInstance()?.api;
+      if (botApi) {
+        void botApi
+          .sendMessage(stored.chatId, t("bot.server_temporary_error"))
+          .catch(() => {});
+      }
+      promptRetryStore.delete(sessionId);
+    },
+  });
+}
+
 export type PromptResponseMode = "text_only" | "text_and_tts";
 
 type ProcessPromptOptions = {
@@ -292,6 +414,16 @@ export async function processUserPrompt(
     if (text.trim().length > 0) {
       externalUserInputSuppressionManager.register(currentSession.id, text);
     }
+
+    // Store prompt for potential retry on transient server errors
+    storePromptForRetry(currentSession.id, {
+      options: promptOptions,
+      responseMode,
+      chatId: ctx.chat!.id,
+      configuredProviderID: storedModel.providerID,
+      configuredModelID: storedModel.modelID,
+      retryCount: 0,
+    });
 
     // CRITICAL: Use the async prompt start endpoint here.
     // session.prompt streams the full assistant response and can outlive the original
