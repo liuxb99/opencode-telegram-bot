@@ -6,6 +6,8 @@ export const fr: I18nDictionary = {
   "cmd.description.stop": "Arrêter l'action en cours",
   "cmd.description.detach": "Se détacher de la session actuelle",
   "cmd.description.sessions": "Lister les sessions",
+  "cmd.description.dashboard": "Start web dashboard",
+  "cmd.description.history": "Browse conversation history",
   "cmd.description.messages": "Parcourir les messages de session",
   "cmd.description.tts": "Basculer les réponses audio",
   "cmd.description.models": "Changer de modèle",

@@ -6,6 +6,8 @@ export const zh: I18nDictionary = {
   "cmd.description.stop": "停止当前操作",
   "cmd.description.detach": "从当前会话分离",
   "cmd.description.sessions": "列出会话",
+  "cmd.description.dashboard": "Start web dashboard",
+  "cmd.description.history": "浏览对话历史",
   "cmd.description.messages": "浏览会话消息",
   "cmd.description.tts": "切换语音回复",
   "cmd.description.models": "切换模型",

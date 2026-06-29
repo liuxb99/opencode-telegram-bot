@@ -6,6 +6,8 @@ export const ru: I18nDictionary = {
   "cmd.description.stop": "Прервать текущее действие",
   "cmd.description.detach": "Отсоединиться от текущей сессии",
   "cmd.description.sessions": "Список сессий",
+  "cmd.description.dashboard": "Start web dashboard",
+  "cmd.description.history": "Browse conversation history",
   "cmd.description.messages": "Сообщения текущей сессии",
   "cmd.description.tts": "Переключить аудиоответы",
   "cmd.description.models": "Сменить модель",

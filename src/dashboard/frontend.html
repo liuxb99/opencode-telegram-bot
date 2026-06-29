@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>对话记录管理</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f5f5f5;color:#333}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+h1{margin-bottom:8px;color:#1a73e8;font-size:22px}
+.tab-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:4px}
+.tab{padding:5px 14px;border:1px solid #1a73e8;border-radius:16px;background:#fff;color:#1a73e8;cursor:pointer;font-size:13px;white-space:nowrap}
+.tab:hover{background:#e8f0fe}
+.tab-active{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.proj-nav{display:flex;gap:6px;margin-top:4px;margin-bottom:8px;align-items:center;font-size:12px;color:#888}
+.proj-nav button{padding:4px 10px;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;font-size:12px}
+.proj-nav button:hover{background:#e8f0fe}
+.layout-bar{display:flex;gap:6px;margin-bottom:8px}
+.layout-bar button{padding:5px 14px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;font-size:13px}
+.layout-bar button.active{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.layout-bar button:hover{background:#e8f0fe}
+.toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.toolbar select,.toolbar input,.toolbar button{padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px}
+.toolbar select{min-width:180px}
+.toolbar input[type=text]{min-width:180px;flex:1}
+.toolbar button{background:#1a73e8;color:#fff;border:none;cursor:pointer}
+.toolbar button:hover{background:#1557b0}
+.toolbar label{display:flex;align-items:center;gap:4px;cursor:pointer;font-size:13px}
+.stats{margin-bottom:8px;color:#666;font-size:13px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #eee;font-size:13px}
+th{background:#f8f9fa;font-weight:600;color:#555}
+tr:hover{background:#f0f7ff}
+td.id{width:50px;color:#888;font-size:12px}
+td.time{width:140px;white-space:nowrap;color:#888;font-size:12px}
+td.content{max-width:500px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+td.actions{width:120px;white-space:nowrap}
+.btn-star{cursor:pointer;border:none;background:0 0;font-size:16px;padding:2px 5px}
+.btn-del{cursor:pointer;border:none;background:0 0;color:#ea4335;font-size:14px;padding:2px 5px}
+.pagination{display:flex;justify-content:center;gap:4px;margin-top:12px}
+.pagination button{padding:5px 10px;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;font-size:12px}
+.pagination button:hover{background:#e8f0fe}
+.pagination button.active{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.pagination button:disabled{opacity:.5;cursor:default}
+.export-bar{margin-top:10px;display:flex;gap:8px}
+.export-bar button{padding:5px 10px;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;font-size:12px}
+.export-bar button:hover{background:#e8f0fe}
+.empty,.loading{text-align:center;padding:30px;color:#999;font-size:14px}
+.toast{position:fixed;bottom:20px;right:20px;padding:10px 18px;border-radius:6px;color:#fff;font-size:13px;opacity:0;transition:opacity .3s;z-index:999}
+.toast.success{background:#34a853}
+.toast.error{background:#ea4335}
+.toast.show{opacity:1}
+.view-card table,.view-card .card-container{display:block}
+.view-card table{display:none}
+.view-card .card-container{display:block}
+.view-compact .card-container{display:none}
+.view-compact table{display:table}
+.view-table .card-container{display:none}
+.view-table table{display:table}
+.view-compact td.content{max-width:none;font-size:12px;white-space:normal}
+.view-compact td{padding:5px 6px;font-size:12px}
+.view-compact td.time{font-size:11px}
+.card-container{display:none;padding:0}
+.msg-card{border:1px solid #e0e0e0;border-radius:8px;padding:12px 16px;margin-bottom:10px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.msg-card:hover{border-color:#1a73e8}
+.msg-card .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:12px;color:#888}
+.msg-card .card-body{font-size:14px;line-height:1.6;color:#333;word-break:break-word}
+.msg-card .card-actions{margin-top:6px;display:flex;gap:6px}
+/* Log panel */
+.log-panel{display:none}
+.log-panel.open{display:block;margin-top:0}
+.log-panel.full .log-body{max-height:60vh;min-height:300px}
+.log-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#333;border-radius:8px 8px 0 0;color:#fff;font-family:sans-serif;font-size:14px}
+.log-body{max-height:300px;overflow-y:auto;padding:6px 10px;background:#1e1e1e;color:#ccc;font-family:Consolas,monospace;font-size:12px;border-radius:0 0 8px 8px;border:1px solid #333;border-top:none}
+.log-body div{padding:2px 0;border-bottom:1px solid #333;white-space:pre-wrap;word-break:break-all}
+.log-body .level-error{color:#f48771}
+.log-body .level-warn{color:#ffc107}
+.log-body .level-info{color:#89ddff}
+.log-clear{float:right;cursor:pointer;color:#888;font-size:11px;margin-left:8px}
+.log-clear:hover{color:#fff}
+/* Log active - hide project content */
+.log-active .proj-nav,
+.log-active .layout-bar,
+.log-active .toolbar,
+.log-active .stats,
+.log-active table,
+.log-active .card-container,
+.log-active .pagination,
+.log-active .export-bar { display: none !important; }
+.log-active .log-panel.open { display: block; margin-top:0 }
+</style>
+</head>
+<body>
+<div class="container" id="mainContainer">
+<h1>对话记录管理</h1>
+<div class="tab-row" id="projectTabs"></div>
+<div class="proj-nav" id="projNav"></div>
+<div class="layout-bar">
+<button class="active" onclick="switchLayout('table')" data-layout="table">列表</button>
+<button onclick="switchLayout('card')" data-layout="card">卡片</button>
+<button onclick="switchLayout('compact')" data-layout="compact">简洁</button>
+</div>
+<div class="toolbar">
+<input type="text" id="searchInput" placeholder="搜索关键字...">
+<label><input type="checkbox" id="reusableFilter"> 仅显示可重用</label>
+<button id="loadMsgsBtn">搜索</button>
+<button id="refreshProjBtn">刷新项目</button>
+</div>
+<div class="stats" id="stats"></div>
+<table><thead><tr><th>ID</th><th>时间</th><th>内容</th><th>操作</th></tr></thead>
+<tbody id="messageBody"><tr><td colspan="4" class="loading">加载中...</td></tr></tbody></table>
+<div class="card-container" id="cardContainer"><div class="empty">暂无卡片内容</div></div>
+<div class="pagination" id="pagination"></div>
+<div class="export-bar">
+<button onclick="ef('json')">导出 JSON</button>
+<button onclick="ef('csv')">导出 CSV</button>
+</div>
+</div>
+<div class="log-panel full" id="logPanel">
+<div class="log-header">
+<span>终端日志 <span class="log-clear" onclick="event.stopPropagation();clearLogs()">清空</span></span>
+<span id="logCount">0</span>
+</div>
+<div class="log-body" id="logBody"><div style="border:none;color:#888;text-align:center;padding:10px">等待日志...</div></div>
+</div>
+<div id="toast" class="toast"></div>
+<script>
+var cw = "";
+var cp = 1;
+var cl = 20;
+var projOffset = 0;
+var projTotal = 0;
+var currentLayout = "table";
+var logOpen = false;
+var lastLogTime = "";
+var logTabActive = false;
+
+async function api(p) {
+  var r = await fetch(p);
+  return r.json();
+}
+
+function st(m, t) {
+  var e = document.getElementById("toast");
+  e.textContent = m;
+  e.className = "toast " + t + " show";
+  setTimeout(function() { e.classList.remove("show"); }, 2000);
+}
+
+function switchLayout(layout) {
+  currentLayout = layout;
+  var btns = document.querySelectorAll(".layout-bar button");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].className = btns[i].getAttribute("data-layout") === layout ? "active" : "";
+  }
+  var c = document.getElementById("mainContainer");
+  c.className = c.className.replace(/view-\w+/g, "").trim() + " view-" + layout;
+  if (layout === "card") renderCards();
+}
+
+function renderCards() {
+  var rows = window._lastRows;
+  var cc = document.getElementById("cardContainer");
+  if (!rows || rows.length === 0) {
+    cc.innerHTML = '<div class="empty">暂无卡片内容</div>';
+    return;
+  }
+  var html = "";
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    var pv = eh(r.message_content);
+    var stIcon = r.reusable === 1 ? "⭐" : "☆";
+    html += '<div class="msg-card">' +
+      '<div class="card-header"><span>#' + r.id + ' | ' + ft(r.datetime) + ' | ' + eh(r.project_name) + '</span><span>' + stIcon + '</span></div>' +
+      '<div class="card-body">' + pv + '</div>' +
+      '<div class="card-actions">' +
+        '<button class="btn-star" onclick="tr(' + r.id + ',' + (r.reusable === 1 ? 'false' : 'true') + ')">' + stIcon + '</button>' +
+        '<button class="btn-del" onclick="de(' + r.id + ')">删除</button>' +
+      '</div></div>';
+  }
+  cc.innerHTML = html;
+}
+
+async function lp() {
+  try {
+    var d = await api("/api/projects?offset=" + projOffset + "&limit=10");
+    var items = Array.isArray(d) ? d : d.projects;
+    if (!items) return;
+    var tb = document.getElementById("projectTabs");
+    if (!tb) return;
+    tb.innerHTML = "";
+    for (var i = 0; i < items.length; i++) {
+      var btn = document.createElement("button");
+      btn.textContent = items[i].projectName + "(" + items[i].messageCount + ")";
+      btn.className = "tab";
+      btn.setAttribute("data-wt", items[i].worktree);
+      btn.onclick = function() { selectProject(this.getAttribute("data-wt")); };
+      tb.appendChild(btn);
+    }
+    // Add log tab
+    var logTab = document.createElement("button");
+    logTab.textContent = "📋 终端日志";
+    logTab.className = "tab" + (logTabActive ? " tab-active" : "");
+    logTab.onclick = toggleLogTab;
+    tb.appendChild(logTab);
+    projTotal = d.total || items.length;
+    renderProjNav();
+    if (items.length > 0 && !cw) {
+      cw = items[0].worktree;
+      lm();
+      var first = tb.firstChild;
+      if (first) first.className = "tab-active";
+    }
+  } catch (e) { console.error("[Dashboard] lp error:", e); }
+}
+
+function renderProjNav() {
+  if (logTabActive) return;
+  var nb = document.getElementById("projNav");
+  var totalPages = Math.ceil(projTotal / 10) || 1;
+  var curPage = Math.floor(projOffset / 10) + 1;
+  var html = '<span>共 ' + projTotal + ' 个项目</span>';
+  if (projOffset >= 10) html += '<button onclick="projPage(-10)">◀ 前10个</button>';
+  html += '<span> ' + curPage + '/' + totalPages + ' </span>';
+  if (projOffset + 10 < projTotal) html += '<button onclick="projPage(10)">后10个 ▶</button>';
+  nb.innerHTML = html;
+}
+
+function projPage(delta) { projOffset += delta; if (projOffset < 0) projOffset = 0; lp(); }
+
+function selectProject(worktree) {
+  logTabActive = false;
+  cw = worktree;
+  cp = 1;
+  lm();
+  var el = document.getElementById("projectTabs");
+  if (!el) return;
+  var tabs = el.children;
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].className = tabs[i].getAttribute("data-wt") === worktree ? "tab-active" : "tab";
+  }
+  // Remove log-active class
+  document.getElementById("mainContainer").className = document.getElementById("mainContainer").className.replace(/ ?log-active/g, "");
+  document.getElementById("logPanel").className = "log-panel full";
+  logOpen = false;
+}
+
+document.getElementById("searchInput").onkeydown = function(e) { if (e.key === "Enter") { cp = 1; lm(); } };
+document.getElementById("reusableFilter").onchange = function() { cp = 1; lm(); };
+document.getElementById("loadMsgsBtn").onclick = function() { cp = 1; lm(); };
+document.getElementById("refreshProjBtn").onclick = function() { projOffset = 0; lp(); };
+
+async function lm() {
+  if (!cw) return;
+  var k = document.getElementById("searchInput").value;
+  var r = document.getElementById("reusableFilter").checked ? "1" : "";
+  var u = "/api/messages?worktree=" + encodeURIComponent(cw) + "&page=" + cp + "&limit=" + cl + "&keyword=" + encodeURIComponent(k) + "&reusable=" + r;
+  var d = await api(u);
+  rm(d);
+}
+
+function rm(d) {
+  window._lastRows = d.rows;
+  var tb = document.getElementById("messageBody");
+  var sts = document.getElementById("stats");
+  if (!d.rows || d.rows.length === 0) {
+    tb.innerHTML = '<tr><td colspan="4" class="empty">暂无记录</td></tr>';
+    var cc = document.getElementById("cardContainer");
+    if (cc) cc.innerHTML = '<div class="empty">暂无记录</div>';
+    sts.textContent = "共 0 条记录";
+    document.getElementById("pagination").innerHTML = "";
+    return;
+  }
+  sts.textContent = "共 " + d.total + " 条 (第 " + d.page + "/" + Math.ceil(d.total / d.limit) + " 页)";
+  var h = "";
+  for (var i = 0; i < d.rows.length; i++) {
+    var r = d.rows[i];
+    var pv = eh(r.message_content).substring(0, 200);
+    var stIcon = r.reusable === 1 ? "⭐" : "_";
+    h += '<tr><td class="id">#' + r.id + '</td><td class="time">' + ft(r.datetime) + '</td><td class="content" title="' + eh(r.message_content) + '">' + pv + '</td><td class="actions">' +
+      '<button class="btn-star" onclick="tr(' + r.id + ',' + (r.reusable === 1 ? 'false' : 'true') + ')">' + stIcon + '</button> ' +
+      '<button class="btn-del" onclick="de(' + r.id + ')">del</button></td></tr>';
+  }
+  tb.innerHTML = h;
+  rp(d);
+  if (currentLayout === "card") renderCards();
+}
+
+function rp(d) {
+  var tp = Math.ceil(d.total / d.limit) || 1;
+  var p = document.getElementById("pagination");
+  var h = '<button onclick="gp(1)" ' + (d.page <= 1 ? "disabled" : "") + '>首页</button>';
+  h += '<button onclick="gp(' + (d.page - 1) + ')" ' + (d.page <= 1 ? "disabled" : "") + '>上一页</button>';
+  for (var i = Math.max(1, d.page - 2); i <= Math.min(tp, d.page + 2); i++) {
+    h += '<button class="' + (i === d.page ? "active" : "") + '" onclick="gp(' + i + ')">' + i + '</button>';
+  }
+  h += '<button onclick="gp(' + (d.page + 1) + ')" ' + (d.page >= tp ? "disabled" : "") + '>下一页</button>';
+  h += '<button onclick="gp(' + tp + ')" ' + (d.page >= tp ? "disabled" : "") + '>末页</button>';
+  p.innerHTML = h;
+}
+
+function gp(p) { cp = p; lm(); }
+
+async function tr(id, v) {
+  var ep = v ? "toggle-reusable" : "unmark-reusable";
+  var u = "/api/" + ep + "?worktree=" + encodeURIComponent(cw) + "&id=" + id;
+  var d = await api(u);
+  if (d.success) { st(v ? "已标记为可重用" : "已取消标记", "success"); lm(); }
+  else { st("操作失败", "error"); }
+}
+
+async function de(id) {
+  if (!confirm("确定删除 #" + id + "?")) return;
+  var u = "/api/delete?worktree=" + encodeURIComponent(cw) + "&id=" + id;
+  var d = await api(u);
+  if (d.success) { st("已删除", "success"); lm(); }
+  else { st("删除失败", "error"); }
+}
+
+function ef(f) {
+  if (!cw) return;
+  window.open("/api/export?worktree=" + encodeURIComponent(cw) + "&format=" + f, "_blank");
+}
+
+function ft(iso) {
+  var d = new Date(iso);
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0") + " " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+}
+
+function eh(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/* Log tab */
+function toggleLogTab() {
+  logTabActive = !logTabActive;
+  var mc = document.getElementById("mainContainer");
+  var panel = document.getElementById("logPanel");
+  if (logTabActive) {
+    mc.className = mc.className + " log-active";
+    panel.className = "log-panel full open";
+    logOpen = true;
+    fetchLogs();
+  } else {
+    mc.className = mc.className.replace(/ ?log-active/g, "");
+    panel.className = "log-panel full";
+    logOpen = false;
+  }
+  // Update tab styling
+  var tabs = document.getElementById("projectTabs");
+  if (tabs) {
+    for (var i = 0; i < tabs.children.length; i++) {
+      var t = tabs.children[i];
+      if (t.textContent.indexOf("终端日志") >= 0) {
+        t.className = logTabActive ? "tab tab-active" : "tab";
+      }
+    }
+  }
+  // Force re-render proj nav
+  renderProjNav();
+}
+
+function clearLogs() {
+  var body = document.getElementById("logBody");
+  body.innerHTML = '<div style="border:none;color:#888;text-align:center;padding:10px">日志已清空...</div>';
+  document.getElementById("logCount").textContent = "0";
+  lastLogTime = "";
+}
+
+async function fetchLogs() {
+  if (!logOpen) return;
+  try {
+    var since = lastLogTime ? "&since=" + encodeURIComponent(lastLogTime) : "";
+    var d = await api("/api/logs?level=all" + since);
+    var body = document.getElementById("logBody");
+    // Clear placeholder on first logs
+    if (d.length > 0 && lastLogTime === "") {
+      body.innerHTML = "";
+    }
+    for (var i = 0; i < d.length; i++) {
+      var e = d[i];
+      var div = document.createElement("div");
+      div.className = "level-" + e.level;
+      div.textContent = "[" + e.time.slice(11, 19) + "][" + e.level.toUpperCase() + "] " + e.msg;
+      body.appendChild(div);
+      if (e.time > lastLogTime) lastLogTime = e.time;
+    }
+    if (d.length > 0) body.scrollTop = body.scrollHeight;
+    document.getElementById("logCount").textContent = body.children.length;
+  } catch (e) { /* ignore */ }
+  if (logOpen) setTimeout(fetchLogs, 3000);
+}
+
+window.addEventListener("keydown", function(e) {
+  if (e.key === "l" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); toggleLogTab(); }
+});
+
+lp();
+</script>
+</body>
+</html>

@@ -5,6 +5,8 @@ export const en = {
   "cmd.description.detach": "Detach from current session",
   "cmd.description.sessions": "List sessions",
   "cmd.description.messages": "Browse session messages",
+  "cmd.description.dashboard": "Start web dashboard",
+  "cmd.description.history": "Browse conversation history",
   "cmd.description.tts": "Toggle audio replies",
   "cmd.description.models": "Switch model",
   "cmd.description.projects": "List projects",

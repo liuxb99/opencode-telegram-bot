@@ -6,6 +6,8 @@ export const es: I18nDictionary = {
   "cmd.description.stop": "Detener la acción actual",
   "cmd.description.detach": "Desconectar de la sesión actual",
   "cmd.description.sessions": "Listar sesiones",
+  "cmd.description.dashboard": "Start web dashboard",
+  "cmd.description.history": "Browse conversation history",
   "cmd.description.messages": "Ver mensajes de la sesión",
   "cmd.description.tts": "Alternar respuestas de audio",
   "cmd.description.models": "Cambiar modelo",

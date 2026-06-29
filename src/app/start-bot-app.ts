@@ -17,6 +17,7 @@ import { clearServiceStateFile } from "../service/manager.js";
 import { getServiceStateFilePathFromEnv, isServiceChildProcess } from "../service/runtime.js";
 import { getLogFilePath, initializeLogger, logger } from "../utils/logger.js";
 import { safeBackgroundTask } from "../utils/safe-background-task.js";
+import { postLogToWorker, startDashboardWorker } from "../dashboard/dashboard-worker.js";
 
 const SHUTDOWN_TIMEOUT_MS = 5000;
 
@@ -54,6 +55,27 @@ export async function startBotApp(): Promise<void> {
   registerOpenCodeReadyRefreshHandler();
   const bot = createBot();
   await scheduledTaskRuntime.initialize(bot);
+
+  // Auto-start web dashboard
+  const origConsoleLog = console.log;
+  const origConsoleWarn = console.warn;
+  const origConsoleError = console.error;
+  function fmtLogArg(arg: unknown): string {
+    if (typeof arg === "string") return arg;
+    if (arg instanceof Error) return arg.stack ?? String(arg);
+    try { return JSON.stringify(arg); } catch { return String(arg); }
+  }
+  console.log = (...args: unknown[]) => { origConsoleLog(...args); postLogToWorker("info", args.map(fmtLogArg).join(" ")); };
+  console.warn = (...args: unknown[]) => { origConsoleWarn(...args); postLogToWorker("warn", args.map(fmtLogArg).join(" ")); };
+  console.error = (...args: unknown[]) => { origConsoleError(...args); postLogToWorker("error", args.map(fmtLogArg).join(" ")); };
+
+  safeBackgroundTask({
+    taskName: "app.dashboard",
+    task: async () => {
+      const port = await startDashboardWorker();
+      logger.info("Web dashboard available at http://localhost:" + port);
+    },
+  });
   safeBackgroundTask({
     taskName: "app.opencodeStartup",
     task: async () => {

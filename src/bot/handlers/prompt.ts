@@ -18,6 +18,7 @@ import { safeBackgroundTask } from "../../utils/safe-background-task.js";
 import { formatErrorDetails } from "../../utils/error-format.js";
 import { logger } from "../../utils/logger.js";
 import { t } from "../../i18n/index.js";
+import { logUserMessage } from "../../conversation-log/store.js";
 import { foregroundSessionState } from "../../scheduled-task/foreground-state.js";
 import { assistantRunState } from "../assistant-run-state.js";
 import {
@@ -259,7 +260,6 @@ export async function processUserPrompt(
 
   botInstance = bot;
   chatIdInstance = ctx.chat!.id;
-
   let currentSession = getCurrentSession();
   let createdNewSession = false;
 
@@ -466,6 +466,11 @@ export async function processUserPrompt(
         void bot.api.sendMessage(ctx.chat!.id, t("bot.prompt_send_error")).catch(() => {});
       },
     });
+
+    // Defer DB write - send to server first, persist afterward
+    setTimeout(() => {
+      try { logUserMessage(currentProject.worktree, text); } catch {}
+    }, 0);
 
     return true;
   } catch (err) {

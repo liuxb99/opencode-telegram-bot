@@ -39,6 +39,24 @@ import {
   handleCommandTextArguments,
 } from "./commands/commands.js";
 import { handleMessagesCallback, messagesCommand } from "./commands/messages.js";
+import { handleHistoryCallback, handleHistorySearchInput, historyCommand } from "./commands/history.js";
+import { startDashboardWorker, stopDashboardWorker } from "../dashboard/dashboard-worker.js";
+import { closeDatabase, logBotResponse } from "../conversation-log/store.js";
+
+let dashboardPort: number | null = null;
+
+async function dashboardCommand(ctx: Context): Promise<void> {
+  if (dashboardPort !== null) {
+    await ctx.reply("Dashboard already running at http://localhost:" + dashboardPort);
+    return;
+  }
+  try {
+    dashboardPort = await startDashboardWorker();
+    await ctx.reply("Dashboard started! Open http://localhost:" + dashboardPort + " in your browser.");
+  } catch (err) {
+    await ctx.reply("Failed to start dashboard.");
+  }
+}
 import {
   skillsCommand,
   handleSkillsCallback,
@@ -586,6 +604,13 @@ async function ensureEventSubscription(directory: string): Promise<void> {
           chatId,
           text: messageText,
         });
+
+        // Save AI response to conversation DB
+        if (currentSession?.directory && messageText) {
+          setTimeout(() => {
+            try { logBotResponse(currentSession.directory, messageText); } catch {}
+          }, 0);
+        }
       } catch (err) {
         clearPromptResponseMode(sessionId);
         assistantRunState.clearRun(sessionId, "assistant_finalize_failed");
@@ -1197,6 +1222,8 @@ export function createBot(): Bot<Context> {
   bot.command("ls", lsCommand);
   bot.command("sessions", sessionsCommand);
   bot.command("messages", messagesCommand);
+  bot.command("history", historyCommand);
+  bot.command("dashboard", dashboardCommand);
   bot.command("new", (ctx) => newCommand(ctx, { bot, ensureEventSubscription }));
   bot.command("abort", abortCommand);
   bot.command("detach", detachCommand);
@@ -1247,6 +1274,7 @@ export function createBot(): Bot<Context> {
       const handledRenameCancel = await handleRenameCancel(ctx);
       const handledCommands = await handleCommandsCallback(ctx, { bot, ensureEventSubscription });
       const handledMessages = await handleMessagesCallback(ctx, { bot, ensureEventSubscription });
+      const handledHistory = await handleHistoryCallback(ctx);
       const handledSkills = await handleSkillsCallback(ctx, { bot, ensureEventSubscription });
       const handledMcps = await handleMcpsCallback(ctx);
 
@@ -1275,6 +1303,7 @@ export function createBot(): Bot<Context> {
         !handledRenameCancel &&
         !handledCommands &&
         !handledMessages &&
+        !handledHistory &&
         !handledSkills &&
         !handledMcps
       ) {
@@ -1530,6 +1559,11 @@ export function createBot(): Bot<Context> {
       return;
     }
 
+    const handledHistorySearch = await handleHistorySearchInput(ctx, text);
+    if (handledHistorySearch) {
+      return;
+    }
+
     await processUserPrompt(ctx, text, promptDeps);
 
     logger.debug("[Bot] message:text handler completed (prompt sent in background)");
@@ -1565,6 +1599,9 @@ export function cleanupBotRuntime(reason: string): void {
     clearInterval(heartbeatTimer);
     heartbeatTimer = null;
   }
+
+  stopDashboardWorker();
+  closeDatabase();
 
   botInstance = null;
   chatIdInstance = null;
